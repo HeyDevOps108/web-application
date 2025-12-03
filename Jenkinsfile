@@ -1,33 +1,43 @@
 pipeline {
-    agent any 
+    agent none
 
     environment {
         WEBROOT = '/var/www/html'
     }
 
     stages {
-        stage ('Checkout SCM') {
+        stage ('checkout git project') {
+            agent {label 'master'}
             steps {
-                    checkout scm
+                checkout scm
+                stash includes: 'dist.zip', name: 'artifact'
             }
         }
 
-        stage ('Deploy to Nginx') {
+        stage ('Deployment on Slave-1') {
+            agent {label 'Slave-1'}
             steps {
-              sh '''
-                sudo unzip -o dist.zip
-                sudo rm -rf ${WEBROOT}/*
-                sudo cp -r dist/Folio/* ${WEBROOT}/
-                sudo chown -R www-data:www-data ${WEBROOT}
-              '''  
+                unstash 'artifact'
+                sh """
+                    sudo rm -rf ${WEBROOT}/*
+                    sudo unzip -o dist.zip
+                    sudo cp -r dist/Folio/* ${WEBROOT}/
+                    sudo systemctl restart nginx
+                """
             }
         }
 
-        stage ('Restart the Server') {
+        stage ('Deployment on Slave-2') {
+            agent {label 'Slave-2'}
             steps {
-                sh 'sudo systemctl restart nginx'
+                unstash 'artifact'
+                sh """
+                    sudo rm -rf ${WEBROOT}/*
+                    sudo unzip dist.zip 
+                    sudo cp -r dist/Folio/* ${WEBROOT}/
+                    sudo systemctl restart nginx
+                """
             }
         }
-
     }
 }
