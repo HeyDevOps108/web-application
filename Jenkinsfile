@@ -17,13 +17,13 @@ pipeline {
               sh '''
                 sudo unzip -o dist.zip
                 sudo rm -rf ${WEBROOT}/*
-                sudo cp -r dist/* ${WEBROOT}/
+                sudo cp -r dist/Folio/* ${WEBROOT}/
                 sudo chown -R www-data:www-data ${WEBROOT}
               '''  
             }
         }
 
-        stage ('Rstart the Server') {
+        stage ('Restart the Server') {
             steps {
                 sh 'sudo systemctl restart nginx'
             }
