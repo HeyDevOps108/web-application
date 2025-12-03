@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         WEBROOT = '/var/www/html'
+        SLACK_CHANNEL = '#all-play-with-devops'
+        SLACK_TOKEN = 'slack-token'   // credential ID (Secret Text)
     }
 
     stages {
@@ -10,6 +12,13 @@ pipeline {
         stage ('Checkout & Stash on Master') {
             agent { label 'master' }
             steps {
+                script {
+                    slackSend tokenCredentialId: env.SLACK_TOKEN,
+                              channel: env.SLACK_CHANNEL,
+                              color: "good",
+                              message: "🚀 Deployment STARTED on MASTER (Build #${env.BUILD_NUMBER})"
+                }
+
                 checkout scm
                 stash includes: 'dist.zip', name: 'artifact'
                 echo "Artifact stashed successfully from MASTER"
@@ -27,6 +36,13 @@ pipeline {
                     sudo systemctl restart nginx
                 """
                 echo "Deployment completed on SLAVE 1"
+
+                script {
+                    slackSend tokenCredentialId: env.SLACK_TOKEN,
+                              channel: env.SLACK_CHANNEL,
+                              color: "#439FE0",
+                              message: "📌 Deployment completed on *SLAVE 1* (Build #${env.BUILD_NUMBER})"
+                }
             }
         }
 
@@ -41,7 +57,37 @@ pipeline {
                     sudo systemctl restart nginx
                 """
                 echo "Deployment completed on SLAVE 2"
+
+                script {
+                    slackSend tokenCredentialId: env.SLACK_TOKEN,
+                              channel: env.SLACK_CHANNEL,
+                              color: "#439FE0",
+                              message: "📌 Deployment completed on *SLAVE 2* (Build #${env.BUILD_NUMBER})"
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            slackSend tokenCredentialId: env.SLACK_TOKEN,
+                      channel: env.SLACK_CHANNEL,
+                      color: "good",
+                      message: "✅ Deployment SUCCESS — Build #${env.BUILD_NUMBER}"
+        }
+
+        failure {
+            slackSend tokenCredentialId: env.SLACK_TOKEN,
+                      channel: env.SLACK_CHANNEL,
+                      color: "danger",
+                      message: "❌ Deployment FAILED — Build #${env.BUILD_NUMBER}"
+        }
+
+        always {
+            slackSend tokenCredentialId: env.SLACK_TOKEN,
+                      channel: env.SLACK_CHANNEL,
+                      color: "#CCCCCC",
+                      message: "🔗 Console Log: <${env.BUILD_URL}console|Click here>"
         }
     }
 }
