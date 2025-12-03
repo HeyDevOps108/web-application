@@ -7,7 +7,7 @@ pipeline {
 
     stages {
         stage ('checkout git project') {
-            agent {label 'master'}
+            agent { label 'master' }
             steps {
                 checkout scm
                 stash includes: 'dist.zip', name: 'artifact'
