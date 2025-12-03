@@ -4,7 +4,7 @@ pipeline {
     environment {
         WEBROOT = '/var/www/html'
         SLACK_CHANNEL = '#all-play-with-devops'
-        SLACK_TOKEN = 'slack-token'   // credential ID (Secret Text)
+        SLACK_TOKEN = 'slack-correct-token'   // credential ID (Secret Text)
     }
 
     stages {
