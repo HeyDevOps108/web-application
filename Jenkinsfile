@@ -3,22 +3,18 @@ pipeline {
 
     environment {
         WEBROOT = '/var/www/html'
-        WORKDIR = '/mnt/workspace'
     }
 
     stages {
         stage ('Checkout SCM') {
             steps {
-                dir("${WORKDIR}") {
                     checkout scm
-                }
             }
         }
 
         stage ('Deploy to Nginx') {
             steps {
               sh '''
-                cd ${WORKDIR}
                 sudo unzip -o dist.zip
                 sudo rm -rf ${WEBROOT}/*
                 sudo cp -r dist/* ${WEBROOT}/
