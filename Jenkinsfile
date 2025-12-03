@@ -1,5 +1,5 @@
 pipeline {
-    agent master
+    agent { label 'master' }
 
     environment {
         WEBROOT = '/var/www/html'
