@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         WEBROOT = '/var/www/html'
-        WORKDIR = '/mnt'
+        WORKDIR = '/mnt/workspace'
     }
 
     stages {
