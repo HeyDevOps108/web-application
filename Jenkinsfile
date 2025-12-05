@@ -1,46 +1,44 @@
 pipeline {
-    agent none   // do NOT force master at pipeline level
-
+    agent none
+    
     environment {
-        WEBROOT = '/var/www/html'
+        ARTIFACT_NAME = 'Folio'
+        ARTIFACT_VERSION = 'v1.0.0'
     }
 
     stages {
-
-        stage ('Checkout & Stash on Master') {
-            agent { label 'master' }
+        stage ('checkout scm') {
+            agent {label 'master'}
             steps {
                 checkout scm
-                stash includes: 'dist.zip', name: 'artifact'
-                echo "Artifact stashed successfully from MASTER"
+                stash includes: 'dist.zip, Dockerfile', name: 'artifact'
+                echo "Artifact + Dockerfile stashed" 
             }
         }
 
-        stage ('Deployment on Slave 1') {
-            agent { label 'slave1' }
+        stage ('Build and push on Slave-1') {
+            agent {label 'slave1'}
             steps {
                 unstash 'artifact'
                 sh """
-                    sudo rm -rf ${WEBROOT}/*
-                    sudo unzip -o dist.zip
-                    sudo cp -r dist/Folio/* ${WEBROOT}/
-                    sudo systemctl restart nginx
+                    docker build -t ${ARTIFACT_NAME}:${ARTIFACT_VERSION} .
+                    docker run -d --name ${ARTIFACT_NAME} -p 80:80 ${ARTIFACT_NAME}:${ARTIFACT_VERSION}
                 """
-                echo "Deployment completed on SLAVE 1"
+                echo "Image built with name: ${ARTIFACT_NAME} and version: ${ARTIFACT_VERSION}"
+                echo "Container is up and running on Slave-1"
             }
         }
 
-        stage ('Deployment on Slave 2') {
-            agent { label 'slave2' }
+        stage ('build and push on Slave-2') {
+            agent {label 'slave2'}
             steps {
                 unstash 'artifact'
                 sh """
-                    sudo rm -rf ${WEBROOT}/*
-                    sudo unzip -o dist.zip
-                    sudo cp -r dist/Folio/* ${WEBROOT}/
-                    sudo systemctl restart nginx
+                    docker build -t ${ARTIFACT_NAME}:${ARTIFACT_VERSION} .
+                    docker container run -d --name ${ARTIFACT_NAME} -p 80:80 ${ARTIFACT_NAME}:${ARTIFACT_VERSION}
                 """
-                echo "Deployment completed on SLAVE 2"
+                echo "Image built with name: ${ARTIFACT_NAME} and version: ${ARTIFACT_VERSION}"
+                echo "Container is up and running on Slave-1"
             }
         }
     }

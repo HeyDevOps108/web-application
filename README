@@ -1,0 +1,18 @@
+#!/bin/bash
+sudo apt update -y
+
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+sleep 1
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sleep 1
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" -y
+sleep 1
+sudo apt update -y
+sleep 1
+apt-cache policy docker-ce -y
+sleep 1
+sudo apt install docker-ce -y
+sleep 1
+sudo systemctl status docker
+sleep 1
+sudo chmod 777 /var/run/docker.sock
