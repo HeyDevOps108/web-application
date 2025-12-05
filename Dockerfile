@@ -1,3 +1,5 @@
 FROM nginx:latest
-COPY dist/folio/* /usr/share/nginx/html/
+COPY dist/Folio/* /usr/share/nginx/html/
 
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
