@@ -21,8 +21,8 @@ pipeline {
             steps {
                 unstash 'artifact'
                 sh """
-                    docker stop uiapp || true
-                    docker rm uiapp || true
+                    docker stop ${ARTIFACT_NAME} || true
+                    docker rm ${ARTIFACT_NAME} || true
                     unzip -o dist.zip
                     docker build -t ${ARTIFACT_NAME}:${ARTIFACT_VERSION} .
                     docker run -d --name ${ARTIFACT_NAME} -p 80:80 ${ARTIFACT_NAME}:${ARTIFACT_VERSION}
