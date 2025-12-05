@@ -1,9 +1,9 @@
 pipeline {
     agent none
-    
+
     environment {
-        ARTIFACT_NAME = 'Folio'
-        ARTIFACT_VERSION = 'v1.0.0'
+        ARTIFACT_NAME = 'folio'
+        ARTIFACT_VERSION = '1.0.0'
     }
 
     stages {
