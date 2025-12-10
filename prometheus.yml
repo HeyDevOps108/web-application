@@ -9,9 +9,14 @@ scrape_configs:
   - job_name: "node"
     static_configs:
       - targets: ['node-exporter:9100']
-        labels:
+        labels: 
           instance: 'Slave-1'
       - targets: ['172.31.10.134:9100']
         labels:
           instance: 'Slave-2'
-      
+  
+  - job_name: "containers"
+    static_configs:
+      - targets: ['localhost:9323']
+        labels:
+          instance: 'web-app'
