@@ -20,3 +20,10 @@ scrape_configs:
       - targets: ['172.31.4.245:9323']
         labels:
           instance: 'web-app'
+
+  - job_name: "jenkins"
+    metrics_path: "/prometheus"
+    static_configs:
+      - targets: ['172.31.6.60:8080']
+        labels:
+          instance: 'jenkins-master'
