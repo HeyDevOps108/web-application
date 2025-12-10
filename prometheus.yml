@@ -11,7 +11,7 @@ scrape_configs:
       - targets: ['node-exporter:9100']
         labels:
           instance: 'Slave-1'
-      - targets: ['172.31.10.134:9090']
+      - targets: ['172.31.10.134:9100']
         labels:
           instance: 'Slave-2'
       
