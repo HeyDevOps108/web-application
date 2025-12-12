@@ -1,5 +1,23 @@
+##########################################################################################################################################################################
+First time setup
+sudo vi /etc/systemd/system/jenkins-agent.service
+
+[Unit]
+Description=Jenkins Slave Agent
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/jenkins
+ExecStart=/usr/bin/java -jar /home/ubuntu/jenkins/agent.jar -url http://18.191.237.229:8080 -secret 062b3651e0292978d2b3263bd30ed2bcb6f3af061aa804cdd995e8ff25ee9605 -name slave-1 -webSocket -workDir /home/ubuntu/jenkinis
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+##########################################################################################################################################################################
 Slaves conf evertime when we start the machine
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo vi /etc/systemd/system/jenkins-agent.service
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl daemon-reload
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl restart jenkins-agent
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl status jenkins-agent
+##########################################################################################################################################################################
