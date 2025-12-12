@@ -16,3 +16,9 @@ sleep 1
 sudo systemctl status docker
 sleep 1
 sudo chmod 777 /var/run/docker.sock
+
+Slaves conf evertime when we start the machine
+ubuntu@ip-172-31-4-245:~/jenkins$ sudo vi /etc/systemd/system/jenkins-agent.service
+ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl daemon-reload
+ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl restart jenkins-agent
+ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl status jenkins-agent
