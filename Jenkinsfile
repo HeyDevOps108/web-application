@@ -1,50 +1,47 @@
 pipeline {
     agent none
 
-    environment {
-        ARTIFACT_NAME = 'folio'
-        ARTIFACT_VERSION = '1.0.0'
-    }
-
     stages {
         stage ('checkout scm') {
             agent {label 'master'}
             steps {
                 checkout scm
-                stash includes: 'dist.zip, Dockerfile', name: 'artifact'
+                stash includes: 'docker.sh', name: 'artifact'
                 echo "Artifact + Dockerfile stashed" 
             }
         }
 
-        stage ('Build and push on Slave-1') {
-            agent {label 'slave1'}
+        stage ('Installation on app-server-1') {
+            agent {label 'app-server-1'}
             steps {
                 unstash 'artifact'
                 sh """
-                    docker stop ${ARTIFACT_NAME} || true
-                    docker rm ${ARTIFACT_NAME} || true
-                    unzip -o dist.zip
-                    docker build -t ${ARTIFACT_NAME}:${ARTIFACT_VERSION} .
-                    docker run -d --name ${ARTIFACT_NAME} -p 80:80 ${ARTIFACT_NAME}:${ARTIFACT_VERSION}
+                   chmod 777 docker.sh
+                   bash docker.sh
                 """
-                echo "Image built with name: ${ARTIFACT_NAME} and version: ${ARTIFACT_VERSION}"
-                echo "Container is up and running on Slave-1"
+
             }
         }
 
-        stage ('build and push on Slave-2') {
-            agent {label 'slave2'}
+        stage ('Installation on app-server-2') {
+            agent {label 'app-server-2'}
             steps {
                 unstash 'artifact'
                 sh """
-                    docker stop ${ARTIFACT_NAME} || true
-                    docker rm ${ARTIFACT_NAME} || true
-                    unzip -o dist.zip
-                    docker build -t ${ARTIFACT_NAME}:${ARTIFACT_VERSION} .
-                    docker container run -d --name ${ARTIFACT_NAME} -p 80:80 ${ARTIFACT_NAME}:${ARTIFACT_VERSION}
+                   chmod 777 docker.sh
+                   bash docker.sh
                 """
-                echo "Image built with name: ${ARTIFACT_NAME} and version: ${ARTIFACT_VERSION}"
-                echo "Container is up and running on Slave-1"
+            }
+        }
+
+        stage ('Installation on app-server-3') {
+            agent {label 'app-server-3'}
+            steps {
+                unstash 'artifact'
+                sh """
+                   chmod 777 docker.sh
+                   bash docker.sh
+                """
             }
         }
     }
