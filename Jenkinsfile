@@ -1,46 +1,77 @@
 pipeline {
     agent none
 
-    parameters {
-        string(
-            name: 'TARGET_NODES',
-            defaultValue: 'app-server-1,app-server-2',
-            description: 'Comma separated Jenkins agent labels'
-        )
+    environment {
+        ARTIFACT_NAME = 'folio'
+        ARTIFACT_VERSION = '1.0.0'
     }
 
     stages {
 
-        // STEP 1: Always on master
         stage('Checkout SCM') {
-            agent { label 'master' }
+            agent any
             steps {
                 checkout scm
-                stash includes: 'docker.sh', name: 'artifact'
-                echo "Checkout & stash done on master"
+                stash includes: 'dist.zip, Dockerfile', name: 'artifact'
+                echo "Artifact stashed"
             }
         }
 
-        // STEP 2: Dynamic installation on slaves
-        stage('Install Docker on Target Nodes') {
+        stage('Deploy on app-server-1') {
+            agent { label 'slave1' }
             steps {
-                script {
-                    // Convert comma-separated string into list
-                    def nodes = params.TARGET_NODES.split(',').collect { it.trim() }
-
-                    for (nodeLabel in nodes) {
-                        stage("Install on ${nodeLabel}") {
-                            node(nodeLabel) {
-                                unstash 'artifact'
-                                sh '''
-                                    chmod +x docker.sh
-                                    ./docker.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+                unstash 'artifact'
+                sh '''
+                    docker rm -f folio || true
+                    unzip -o dist.zip
+                    docker build -t folio:1.0.0 .
+                    docker run -d \
+                      --name folio \
+                      --restart unless-stopped \
+                      -p 8081:80 \
+                      folio:1.0.0
+                '''
             }
+        }
+
+        stage('Deploy on app-server-2') {
+            agent { label 'slave2' }
+            steps {
+                unstash 'artifact'
+                sh '''
+                    docker rm -f folio || true
+                    unzip -o dist.zip
+                    docker build -t folio:1.0.0 .
+                    docker run -d \
+                      --name folio \
+                      --restart unless-stopped \
+                      -p 8082:80 \
+                      folio:1.0.0
+                '''
+            }
+        }
+
+        stage('Deploy on app-server-3') {
+            agent { label 'slave3' }
+            steps {
+                unstash 'artifact'
+                sh '''
+                    docker rm -f folio || true
+                    unzip -o dist.zip
+                    docker build -t folio:1.0.0 .
+                    docker run -d \
+                      --name folio \
+                      --restart unless-stopped \
+                      -p 8083:80 \
+                      folio:1.0.0
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }
