@@ -28,7 +28,7 @@ pipeline {
                     docker run -d \
                       --name folio \
                       --restart unless-stopped \
-                      -p 8081:80 \
+                      -p 9200:80 \
                       folio:1.0.0
                 '''
             }
@@ -45,7 +45,7 @@ pipeline {
                     docker run -d \
                       --name folio \
                       --restart unless-stopped \
-                      -p 8082:80 \
+                      -p 9300:80 \
                       folio:1.0.0
                 '''
             }
@@ -62,7 +62,7 @@ pipeline {
                     docker run -d \
                       --name folio \
                       --restart unless-stopped \
-                      -p 8083:80 \
+                      -p 9400:80 \
                       folio:1.0.0
                 '''
             }
