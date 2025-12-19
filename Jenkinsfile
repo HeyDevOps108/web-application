@@ -1,47 +1,45 @@
 pipeline {
     agent none
 
+    parameters {
+        string(
+            name: 'TARGET_NODES',
+            defaultValue: 'app-server-1,app-server-2',
+            description: 'Comma separated Jenkins agent labels'
+        )
+    }
+
     stages {
-        stage ('checkout scm') {
-            agent {label 'master'}
+
+        // STEP 1: Always on master
+        stage('Checkout SCM') {
+            agent { label 'master' }
             steps {
                 checkout scm
                 stash includes: 'docker.sh', name: 'artifact'
-                echo "Artifact + Dockerfile stashed" 
+                echo "Checkout & stash done on master"
             }
         }
 
-        stage ('Installation on app-server-1') {
-            agent {label 'app-server-1'}
+        // STEP 2: Dynamic installation on slaves
+        stage('Install Docker on Target Nodes') {
             steps {
-                unstash 'artifact'
-                sh """
-                   chmod 777 docker.sh
-                   bash docker.sh
-                """
+                script {
+                    // Convert comma-separated string into list
+                    def nodes = params.TARGET_NODES.split(',').collect { it.trim() }
 
-            }
-        }
-
-        stage ('Installation on app-server-2') {
-            agent {label 'app-server-2'}
-            steps {
-                unstash 'artifact'
-                sh """
-                   chmod 777 docker.sh
-                   bash docker.sh
-                """
-            }
-        }
-
-        stage ('Installation on app-server-3') {
-            agent {label 'app-server-3'}
-            steps {
-                unstash 'artifact'
-                sh """
-                   chmod 777 docker.sh
-                   bash docker.sh
-                """
+                    for (nodeLabel in nodes) {
+                        stage("Install on ${nodeLabel}") {
+                            node(nodeLabel) {
+                                unstash 'artifact'
+                                sh '''
+                                    chmod +x docker.sh
+                                    ./docker.sh
+                                '''
+                            }
+                        }
+                    }
+                }
             }
         }
     }
