@@ -18,7 +18,7 @@ pipeline {
         }
 
         stage('Deploy on app-server-1') {
-            agent { label 'slave1' }
+            agent { label 'app-server-1' }
             steps {
                 unstash 'artifact'
                 sh '''
@@ -35,7 +35,7 @@ pipeline {
         }
 
         stage('Deploy on app-server-2') {
-            agent { label 'slave2' }
+            agent { label 'app-server-2' }
             steps {
                 unstash 'artifact'
                 sh '''
@@ -52,7 +52,7 @@ pipeline {
         }
 
         stage('Deploy on app-server-3') {
-            agent { label 'slave3' }
+            agent { label 'app-server-3' }
             steps {
                 unstash 'artifact'
                 sh '''
