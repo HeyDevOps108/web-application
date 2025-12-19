@@ -22,3 +22,89 @@ ubuntu@ip-172-31-4-245:~/jenkins$ sudo vi /etc/systemd/system/jenkins-agent.serv
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl daemon-reload
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl restart jenkins-agent
 ubuntu@ip-172-31-4-245:~/jenkins$ sudo systemctl status jenkins-agent
+
+#Node-exporter setup
+cd /tmp
+wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+tar -xvf node_exporter-1.6.1.linux-amd64.tar.gz
+sudo cp node_exporter-1.6.1.linux-amd64/node_exporter /usr/local/bin/
+sudo tee /etc/systemd/system/node_exporter.service > /dev/null <<EOF
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl start node_exporter
+sudo systemctl enable node_exporter
+
+#prometheus server setup
+cd /tmp
+cd /tmp
+wget https://github.com/prometheus/prometheus/releases/download/v2.46.0/prometheus-2.46.0.linux-amd64.tar.gz
+tar -xvf prometheus-2.46.0.linux-amd64.tar.gz
+sudo cp prometheus-2.46.0.linux-amd64/prometheus /usr/local/bin/
+sudo cp prometheus-2.46.0.linux-amd64/promtool /usr/local/bin/
+
+sudo mkdir -p /etc/prometheus /var/lib/prometheus
+sudo cp -r prometheus-2.46.0.linux-amd64/consoles /etc/prometheus/
+sudo cp -r prometheus-2.46.0.linux-amd64/console_libraries /etc/prometheus/
+
+sudo tee /etc/systemd/system/prometheus.service > /dev/null <<EOF
+[Unit]
+Description=Prometheus Monitoring
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/local/bin/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/var/lib/prometheus \
+  --web.console.templates=/etc/prometheus/consoles \
+  --web.console.libraries=/etc/prometheus/console_libraries
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo tee /etc/prometheus/prometheus.yml > /dev/null <<EOF
+global:
+  scrape_interval: 15s
+  
+scrape_configs:
+   - job_name: "prometheus"
+     static_configs:
+       - targets: ["localhost:9090"]
+       
+   - job_name: "app-servers"
+     static_configs:
+       - targets:
+        - "10.0.11.18:9100" <your private ip's>>
+        - "10.0.12.253:9100"
+         - "10.0.11.226:9100"
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl start prometheus
+sudo systemctl enable prometheus
+
+
+#### Grafana setup ###
+sudo apt-get install -y apt-transport-https software-properties-common
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+sudo apt update -y
+sudo apt install grafana -y
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+sudo systemctl status grafana-server
+
