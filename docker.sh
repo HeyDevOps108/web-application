@@ -17,3 +17,5 @@ sleep 1
 #sudo systemctl status docker
 sleep 1
 sudo chmod 777 /var/run/docker.sock
+sleep 1
+sudo apt install unzip -y
