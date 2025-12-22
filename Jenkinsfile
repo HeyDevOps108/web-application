@@ -22,50 +22,13 @@ pipeline {
             steps {
                 unstash 'artifact'
                 sh '''
-                    docker rm -f folio || true
                     unzip -o dist.zip
                     docker build -t folio:1.0.0 .
-                    docker run -d \
-                      --name folio \
-                      --restart unless-stopped \
-                      -p 9200:80 \
-                      folio:1.0.0
+                    
                 '''
             }
         }
 
-        stage('Deploy on app-server-2') {
-            agent { label 'app-server-2' }
-            steps {
-                unstash 'artifact'
-                sh '''
-                    docker rm -f folio || true
-                    unzip -o dist.zip
-                    docker build -t folio:1.0.0 .
-                    docker run -d \
-                      --name folio \
-                      --restart unless-stopped \
-                      -p 9300:80 \
-                      folio:1.0.0
-                '''
-            }
-        }
-
-        stage('Deploy on app-server-3') {
-            agent { label 'app-server-3' }
-            steps {
-                unstash 'artifact'
-                sh '''
-                    docker rm -f folio || true
-                    unzip -o dist.zip
-                    docker build -t folio:1.0.0 .
-                    docker run -d \
-                      --name folio \
-                      --restart unless-stopped \
-                      -p 9400:80 \
-                      folio:1.0.0
-                '''
-            }
-        }
     }
+
 }
