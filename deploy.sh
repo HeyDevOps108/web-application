@@ -1,7 +1,7 @@
 #!/bin/bash
 source ./common.env
 
-set -euo pipefail
+set -ex
 
 CONTAINER_NAME="folio-app"
 PORT=80
