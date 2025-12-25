@@ -52,7 +52,7 @@ pipeline {
                       echo "Uploading dist.zip to Nexus"
                       curl -u ${NEXUS_USER}:${NEXUS_PASS} \
                         --upload-file dist.zip \
-                        http://localhost:8081/repository/opsmatrix-web-artifacts/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/dist.zip
+                        http://10.0.12.224:8081/repository/opsmatrix-web-artifacts/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/dist.zip
                     '''
                 }
             }
