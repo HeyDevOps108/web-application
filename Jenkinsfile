@@ -32,6 +32,7 @@ pipeline {
                 sh '''
                   chmod +x build.sh
                   chmod +x push.sh
+                  chmod +x deploy.sh
                 '''
             }
         }
@@ -73,6 +74,37 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deployment on app-server-1'){
+            agent { label 'app-server-1' }
+            steps {
+                sh '''
+                  ./deploy.sh
+                  echo "Deployment completed on app-server-1"
+                '''
+            }
+        }
+
+        stage('Deployment on app-server-2'){
+            agent { label 'app-server-2' }
+            steps {
+                sh '''
+                  ./deploy.sh
+                  echo "Deployment completed on app-server-2"
+                '''
+            }
+        }
+
+        stage('Deployment on app-server-3'){
+            agent { label 'app-server-3' }
+            steps{
+                sh '''
+                  ./deploy.sh
+                  echo "Deployment completed on app-server-3"
+                '''
+            }
+        }
+
     }
 
     post {
