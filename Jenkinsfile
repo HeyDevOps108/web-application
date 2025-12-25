@@ -1,34 +1,86 @@
 pipeline {
-    agent none
+    agent { label 'master' }
+
+    parameters {
+        booleanParam(
+            name: 'UPLOAD_ARTIFACTS',
+            defaultValue: false,
+            description: 'Upload dist.zip to Nexus (only for new artifacts)'
+        )
+        string(
+            name: 'ARTIFACT_NAME',
+            defaultValue: '',
+            description: 'Enter your application name'
+        )
+        string(
+            name: 'ARTIFACT_VERSION',
+            defaultValue: '',
+            description: 'Enter your application version'
+        )
+    }
 
     environment {
-        ARTIFACT_NAME = 'folio'
-        ARTIFACT_VERSION = '1.0.0'
+        ARTIFACT_NAME    = "${params.ARTIFACT_NAME}"
+        ARTIFACT_VERSION = "${params.ARTIFACT_VERSION}"
     }
 
     stages {
 
         stage('Checkout SCM') {
-            agent any
             steps {
                 checkout scm
-                stash includes: 'dist.zip, Dockerfile', name: 'artifact'
-                echo "Artifact stashed"
-            }
-        }
-
-        stage('Deploy on app-server-1') {
-            agent { label 'app-server-1' }
-            steps {
-                unstash 'artifact'
                 sh '''
-                    unzip -o dist.zip
-                    docker build -t folio:1.0.0 .
-                    
+                  chmod +x build.sh
+                  chmod +x push.sh
                 '''
             }
         }
 
+        stage('Upload Artifact to Nexus') {
+            when {
+                expression { params.UPLOAD_ARTIFACTS == true }
+            }
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'Nexus-Secrets',
+                        usernameVariable: 'NEXUS_USER',
+                        passwordVariable: 'NEXUS_PASS'
+                    )
+                ]) {
+                    sh '''
+                      echo "Uploading dist.zip to Nexus"
+                      curl -u ${NEXUS_USER}:${NEXUS_PASS} \
+                        --upload-file dist.zip \
+                        http://localhost:8081/repository/opsmatrix-web-artifacts/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/dist.zip
+                    '''
+                }
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh '''
+                  ./build.sh
+                '''
+            }
+        }
+
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                  ./push.sh
+                '''
+            }
+        }
     }
 
+    post {
+        success {
+            echo "Pipeline completed successfully"
+        }
+        failure {
+            echo "Pipeline failed"
+        }
+    }
 }

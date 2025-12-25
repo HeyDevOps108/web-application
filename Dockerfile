@@ -3,7 +3,11 @@ ARG ARTIFACT_URL
 
 FROM ${BASE_IMAGE_ABSOLUTE_PATH}
 
-RUN wget --no-check-certificate ${ARTIFACT_URL} -P /usr/share/nginx/html/
+WORKDIR /usr/share/nginx/html
+
+RUN wget --no-check-certificate ${ARTIFACT_URL} -O /tmp/app.zip \
+&& unzip /tmp/app.zip -d /usr/share/nginx/html \
+&& rm -rf /tmp/app.zip
 
 EXPOSE 80
 
