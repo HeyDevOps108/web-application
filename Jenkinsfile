@@ -79,6 +79,13 @@ pipeline {
             agent { label 'app-server-1' }
             steps {
                 sh '''
+                  if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
+                      echo "ECR is not avaiable. Configuring..."
+                      chmod +x ecr-config.sh
+                      ./ecr-config
+                  else
+                      echo "ECR is availabel"
+                  fi
                   chmod +x deploy.sh
                   ./deploy.sh
                   echo "Deployment completed on app-server-1"
@@ -90,6 +97,13 @@ pipeline {
             agent { label 'app-server-2' }
             steps {
                 sh '''
+                  if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
+                      echo "ECR is not avaiable. Configuring..."
+                      chmod +x ecr-config.sh
+                      ./ecr-config
+                  else
+                      echo "ECR is availabel"
+                  fi
                   chmod +x deploy.sh
                   ./deploy.sh
                   echo "Deployment completed on app-server-2"
@@ -101,6 +115,13 @@ pipeline {
             agent { label 'app-server-3' }
             steps{
                 sh '''
+                  if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
+                      echo "ECR is not avaiable. Configuring..."
+                      chmod +x ecr-config.sh
+                      ./ecr-config
+                  else
+                      echo "ECR is availabel"
+                  fi
                   chmod +x deploy.sh
                   ./deploy.sh
                   echo "Deployment completed on app-server-3"
