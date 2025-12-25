@@ -6,7 +6,7 @@ docker rm -f $(docker ps -aq)
 set -ex
 
 CONTAINER_NAME="folio-app"
-PORT=8080
+PORT=9100
 
 echo "Deploying image: ${IMAGE_ABSOLUTE_PATH}"
 
