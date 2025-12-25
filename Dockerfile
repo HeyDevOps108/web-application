@@ -4,6 +4,8 @@ ARG ARTIFACT_URL
 
 WORKDIR /usr/share/nginx/html
 
+RUN rm -rf /usr/share/nginx/html/*
+
 RUN wget --no-check-certificate ${ARTIFACT_URL} -O /tmp/app.zip \
 && unzip /tmp/app.zip -d /tmp/app \
 && cp -r /tmp/app/dist/Folio/* /usr/share/nginx/html/ \
