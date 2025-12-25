@@ -82,7 +82,7 @@ pipeline {
                   if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
                       echo "ECR is not avaiable. Configuring..."
                       chmod +x ecr-config.sh
-                      ./ecr-config
+                      ./ecr-config.sh
                   else
                       echo "ECR is availabel"
                   fi
@@ -100,7 +100,7 @@ pipeline {
                   if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
                       echo "ECR is not avaiable. Configuring..."
                       chmod +x ecr-config.sh
-                      ./ecr-config
+                      ./ecr-config.sh
                   else
                       echo "ECR is availabel"
                   fi
@@ -118,7 +118,7 @@ pipeline {
                   if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
                       echo "ECR is not avaiable. Configuring..."
                       chmod +x ecr-config.sh
-                      ./ecr-config
+                      ./ecr-config.sh
                   else
                       echo "ECR is availabel"
                   fi
