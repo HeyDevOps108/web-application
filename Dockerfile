@@ -6,7 +6,7 @@ WORKDIR /usr/share/nginx/html
 
 RUN wget --no-check-certificate ${ARTIFACT_URL} -O /tmp/app.zip \
 && unzip /tmp/app.zip -d /tmp/app \
-&& cp -r /tmp/app/dist/* /usr/share/nginx/html/ \
+&& cp -r /tmp/app/dist/Folio/* /usr/share/nginx/html/ \
 && rm -rf /tmp/app.zip
 
 EXPOSE 80
