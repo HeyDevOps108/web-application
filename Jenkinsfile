@@ -79,6 +79,7 @@ pipeline {
             agent { label 'app-server-1' }
             steps {
                 sh '''
+                  chmod +x deploy.sh
                   ./deploy.sh
                   echo "Deployment completed on app-server-1"
                 '''
@@ -89,6 +90,7 @@ pipeline {
             agent { label 'app-server-2' }
             steps {
                 sh '''
+                  chmod +x deploy.sh
                   ./deploy.sh
                   echo "Deployment completed on app-server-2"
                 '''
@@ -99,6 +101,7 @@ pipeline {
             agent { label 'app-server-3' }
             steps{
                 sh '''
+                  chmod +x deploy.sh
                   ./deploy.sh
                   echo "Deployment completed on app-server-3"
                 '''
