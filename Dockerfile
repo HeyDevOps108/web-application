@@ -5,7 +5,8 @@ ARG ARTIFACT_URL
 WORKDIR /usr/share/nginx/html
 
 RUN wget --no-check-certificate ${ARTIFACT_URL} -O /tmp/app.zip \
-&& unzip /tmp/app.zip -d /usr/share/nginx/html \
+&& unzip /tmp/app.zip -d /tmp/app \
+&& cp -r /tmp/app/* /usr/share/nginx/html/ \
 && rm -rf /tmp/app.zip
 
 EXPOSE 80
