@@ -3,7 +3,7 @@ source ./common.env
 
 set -ex
 
-CONTAINER_NAME="folio-app"
+CONTAINER_NAME="folio"
 PORT=80
 
 echo "Deploying image: ${IMAGE_ABSOLUTE_PATH}"
