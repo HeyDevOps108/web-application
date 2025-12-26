@@ -1,8 +1,6 @@
 #!/bin/bash
 source ./common.env
 
-docker rm -f $(docker ps -aq)
-
 set -ex
 
 CONTAINER_NAME="folio-app"
