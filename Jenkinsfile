@@ -8,9 +8,9 @@ pipeline {
             description: 'Upload dist.zip to Nexus (only for new artifacts)'
         )
         booleanParam(
-            name: 'FORCE_BUILD'
-            defaultValue: false
-            description: "True = build || false != build"
+            name: 'FORCE_BUILD',
+            defaultValue: false,
+            description: 'True = build || false != build'
         )
         string(
             name: 'ARTIFACT_NAME',
