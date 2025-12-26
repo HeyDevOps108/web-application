@@ -4,7 +4,7 @@ source ./common.env
 set -ex
 
 CONTAINER_NAME="${ARTIFACT_NAME}"
-PORT=8080
+PORT=80
 
 echo "Deploying image: ${IMAGE_ABSOLUTE_PATH}"
 
