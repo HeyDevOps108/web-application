@@ -1,16 +1,11 @@
-ARG BASE_IMAGE_ABSOLUTE_PATH
-FROM ${BASE_IMAGE_ABSOLUTE_PATH}
-ARG ARTIFACT_URL
+FROM ubuntu:22.04
 
-WORKDIR /var/www/html/
+RUN apt update \
+ && apt install -y nginx unzip curl wget \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN rm -rf /var/www/html/*
+# Remove default config
+RUN rm -f /etc/nginx/conf.d/default.conf
 
-RUN wget --no-check-certificate ${ARTIFACT_URL} -O /tmp/app.zip \
-&& unzip /tmp/app.zip -d /tmp/app \
-&& cp -r /tmp/app/dist/Folio/* /var/www/html/ \
-&& rm -rf /tmp/app.zip
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Copy our reverse proxy config
+COPY default.conf /etc/nginx/conf.d/default.conf

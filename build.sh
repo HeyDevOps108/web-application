@@ -1,20 +1,7 @@
 #!/bin/bash
-source ./common.env
 
-set -ex
+docker build -t 944101542155.dkr.ecr.us-east-1.amazonaws.com/vedant7669/prod_infra/base-image:10.1.1 .
 
-THIS_DIR=$(cd $(dirname ${BASH_SOURCE}) ; pwd)
+sleep 2
 
-echo ${ARTIFACT_NAME}
-echo ${ARTIFACT_VERSION}
-
-docker pull ${BASE_IMAGE_ABSOLUTE_PATH}
-
-ARTIFACT_URL="${ARTIFACT_BASE_URL}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${FOLIO_DIST}"
-echo "ARTIFACT_URL = ${ARTIFACT_URL}"
-
-docker build --pull --build-arg BASE_IMAGE_ABSOLUTE_PATH=${BASE_IMAGE_ABSOLUTE_PATH} \
-                    --build-arg ARTIFACT_URL=${ARTIFACT_URL} \
-                    -t ${IMAGE_ABSOLUTE_PATH} \
-                    -f Dockerfile ${THIS_DIR}
-
+docker push 944101542155.dkr.ecr.us-east-1.amazonaws.com/vedant7669/prod_infra/base-image:10.1.1
