@@ -16,6 +16,10 @@ sed \
    artifacts/obcs-service.svc.yml
 
 sed \
+  -i -e "s|__SUBNAMESPACE__|${SUBNAMESPACE}|g" \
+   artifacts/obcs-service.svc.yml
+
+sed \
   -i -e "s|__DEPLOYMENT_NAME__|${DEPLOYMENT_NAME}|g" \
   -i -e "s|__SUBNAMESPACE__|${SUBNAMESPACE}|g" \
   -i -e "s|__IMAGE_ABSOLUTE_PATH__|${IMAGE_ABSOLUTE_PATH}|g" \
