@@ -22,11 +22,23 @@ pipeline {
             defaultValue: '',
             description: 'Enter your application version'
         )
+        string(
+            name: 'SUBNAMESPACE',
+            defaultValue: '',
+            description: 'Enter your Subnamespace'
+        )
+        string(
+            name: 'REPLICAS',
+            defaultValue: '',
+            description: 'Enter your replicas count'
+        )
     }
 
     environment {
         ARTIFACT_NAME    = "${params.ARTIFACT_NAME}"
         ARTIFACT_VERSION = "${params.ARTIFACT_VERSION}"
+        SUBNAMESPACE     = "${params.SUBNAMESPACE}"
+        REPLICAS         = "${params.REPLICAS}"
     }
 
     stages {
@@ -36,7 +48,7 @@ pipeline {
                 checkout scm
                 sh '''
                   chmod +x build.sh
-                  chmod +x push.sh
+                  chmod +x publish.sh
                   chmod +x deploy.sh
                 '''
             }
@@ -78,40 +90,15 @@ pipeline {
         stage('Push Image to ECR') {
             steps {
                 sh '''
-                  ./push.sh
+                  ./publish.sh
                 '''
             }
         }
 
-        stage('Deployment on app-server-1'){
-            agent { label 'app-server-1' }
+        stage ('Deployment on k8s') {
             steps {
                 sh '''
-                  chmod +x deploy.sh
                   ./deploy.sh
-                  echo "Deployment completed on app-server-1"
-                '''
-            }
-        }
-
-        stage('Deployment on app-server-2'){
-            agent { label 'app-server-2' }
-            steps {
-                sh '''
-                  chmod +x deploy.sh
-                  ./deploy.sh
-                  echo "Deployment completed on app-server-2"
-                '''
-            }
-        }
-
-        stage('Deployment on app-server-3'){
-            agent { label 'app-server-3' }
-            steps{
-                sh '''
-                  chmod +x deploy.sh
-                  ./deploy.sh
-                  echo "Deployment completed on app-server-3"
                 '''
             }
         }

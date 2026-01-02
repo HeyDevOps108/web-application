@@ -1,29 +1,13 @@
 #!/bin/bash
-source ./common.env
-
 set -ex
 
-CONTAINER_NAME="${ARTIFACT_NAME}"
-PORT=80
+source ./common.env
 
-echo "Deploying image: ${IMAGE_ABSOLUTE_PATH}"
+echo "Deploying Kubernetes manifests to ${K8S_NAMESPACE}"
 
-# Pull exact versioned image
-docker pull ${IMAGE_ABSOLUTE_PATH}
+kubectl apply -f artifacts/obcs-service.dep.yml
+kubectl apply -f artifacts/obcs-service.svc.yml
 
-# Remove old container if exists
-if docker ps -a --format '{{.Names}}' | grep -w ${CONTAINER_NAME}; then
-  echo "Stopping existing container"
-  docker rm -f ${CONTAINER_NAME}
-fi
+sleep 5
 
-# Run new container
-docker run -d \
-  --name ${CONTAINER_NAME} \
-  --restart unless-stopped \
-  --memory="512m" \
-  --cpus="1.0" \
-  -p ${PORT}:80 \
-  ${IMAGE_ABSOLUTE_PATH}
-
-echo "Deployment completed on $(hostname)"
+echo "Deployment completed"

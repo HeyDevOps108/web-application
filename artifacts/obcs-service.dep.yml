@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: __DEPLOYMENT_NAME__
+  namespace: __SUBNAMESPACE__
+spec:
+  replicas: __REPLICAS__
+  selector:
+    matchLabels:
+      app: __DEPLOYMENT_NAME__
+  template:
+    metadata:
+      labels:
+        app: __DEPLOYMENT_NAME__
+    spec:
+      containers:
+        - name: __DEPLOYMENT_NAME__
+          image: __IMAGE_ABSOLUTE_PATH__
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: __CPU_LIMIT__
+              memory: __MEM_LIMIT__
+            requests:
+              cpu: __CPU_REQ__
+              memory: __MEM_REQ__

@@ -1,0 +1,6 @@
+version: 1
+deploygroups:
+  - name: obcs-service-deploygroup
+    files:
+      - obcs-service.svc.yaml
+      - obcs-service.dep.yaml
