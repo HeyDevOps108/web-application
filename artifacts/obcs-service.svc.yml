@@ -2,6 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: __DEPLOYMENT_NAME__
+  namespace: __SUBNAMESPACE__
 spec:
   selector:
     component: __DEPLOYMENT_NAME__
