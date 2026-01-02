@@ -5,7 +5,7 @@ metadata:
   namespace: __SUBNAMESPACE__
 spec:
   selector:
-    component: __DEPLOYMENT_NAME__
+    app: __DEPLOYMENT_NAME__
   ports:
     - name: http
       port: 80
