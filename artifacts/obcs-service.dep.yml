@@ -1,28 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: __DEPLOYMENT_NAME__
-  namespace: __SUBNAMESPACE__
+  name: obcs-service
 spec:
-  replicas: __REPLICAS__
+  replicas: 3
   selector:
     matchLabels:
-      app: __DEPLOYMENT_NAME__
+      app: obcs-service
   template:
     metadata:
       labels:
-        app: __DEPLOYMENT_NAME__
+        app: obcs-service
     spec:
       containers:
-        - name: __DEPLOYMENT_NAME__
+        - name: obcs-service
           image: __IMAGE_ABSOLUTE_PATH__
           imagePullPolicy: Always
           ports:
             - containerPort: 80
           resources:
             limits:
-              cpu: __CPU_LIMIT__
-              memory: __MEM_LIMIT__
+              cpu: 100m
+              memory: 100Mi
             requests:
-              cpu: __CPU_REQ__
-              memory: __MEM_REQ__
+              cpu: 50m
+              memory: 50Mi

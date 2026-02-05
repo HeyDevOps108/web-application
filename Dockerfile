@@ -1,15 +1,10 @@
-ARG BASE_IMAGE_ABSOLUTE_PATH
-FROM ${BASE_IMAGE_ABSOLUTE_PATH}
-ARG ARTIFACT_URL
+FROM nginx:1.25-alpine
 
 WORKDIR /var/www/html/
 
 RUN rm -rf /var/www/html/*
 
-RUN wget --no-check-certificate ${ARTIFACT_URL} -O /tmp/app.zip \
-&& unzip /tmp/app.zip -d /tmp/app \
-&& cp -r /tmp/app/dist/Folio/* /var/www/html/ \
-&& rm -rf /tmp/app.zip
+COPY dist/Folio/* .
 
 EXPOSE 80
 
