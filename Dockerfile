@@ -4,7 +4,7 @@ WORKDIR /var/www/html/
 
 RUN rm -rf /var/www/html/*
 
-COPY dist/Folio/* .
+COPY dist/Folio/* /var/www/html/
 
 EXPOSE 80
 
