@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: obcs-service
-          image: __IMAGE_ABSOLUTE_PATH__
+          image: vedant7669/folio-app:1.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 80
