@@ -39,13 +39,21 @@ pipeline {
             }
         }
 
-        stage('Push Image to Dockerhub') {
-            steps {
-                sh '''
-                  ./publish.sh
-                '''
-            }
+stage('Push Image to Dockerhub') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh '''
+              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+              ./publish.sh
+            '''
         }
+    }
+}
+
     }
 
     post {
